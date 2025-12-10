@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎓 Большая Энциклопедия Информатики</title>
+    
+    <style>
+        /* --- СОВРЕМЕННЫЙ ДИЗАЙН --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: #f4f6f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Шапка сайта с градиентом */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .header h1 { margin: 0; font-size: 2.5em; letter-spacing: 1px; }
+        .header p { font-size: 1.2em; opacity: 0.9; }
+
+        /* Контейнер */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Панель управления */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            align-items: center;
+        }
+
+        #searchInput {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        #searchInput:focus { border-color: #764ba2; outline: none; }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        
+        .btn-game { background-color: #f6ad55; color: white; } /* Оранжевая */
+        .btn-add { background-color: #48bb78; color: white; } /* Зеленая */
+        .btn-cat { background-color: #cbd5e0; color: #2d3748; font-size: 0.9em;}
+        .btn-cat.active { background-color: #764ba2; color: white; }
+
+        /* Категории (фильтры) */
+        .categories-nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        /* СЕТКА ДЛЯ КАРТОЧЕК */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Адаптивная сетка */
+            gap: 25px;
+        }
+
+        /* Стиль Карточки */
+        .card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            border-bottom: 4px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Цвета границ для категорий */
+        .card[data-category="hardware"] { border-bottom-color: #3182ce; }
+        .card[data-category="software"] { border-bottom-color: #e53e3e; }
+        .card[data-category="algo"] { border-bottom-color: #d69e2e; }
+        .card[data-category="network"] { border-bottom-color: #805ad5; }
+        .card[data-category="security"] { border-bottom-color: #38a169; }
+
+        .card-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background-color: #edf2f7;
+        }
+
+        .card-content {
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        .card h3 { margin-top: 0; color: #2d3748; }
+        .card p { color: #4a5568; font-size: 0.95em; }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-top: 10px;
+            color: white;
+        }
+        /* Цвета бейджей */
+        .bg-hard { background-color: #3182ce; }
+        .bg-soft { background-color: #e53e3e; }
+        .bg-algo { background-color: #d69e2e; }
+        .bg-net { background-color: #805ad5; }
+        .bg-sec { background-color: #38a169; }
+        .bg-user { background-color: #718096; }
+
+        /* Модальное окно */
+        .modal {
+            display: none; position: fixed; z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+        }
+        .modal-content {
+            background-color: white; margin: 10% auto; padding: 30px;
+            border-radius: 12px; width: 90%; max-width: 500px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            position: relative;
+        }
+        .close-btn { position: absolute; right: 20px; top: 15px; font-size: 28px; cursor: pointer; color: #a0aec0; }
+        .close-btn:hover { color: #2d3748; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #4a5568; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; box-sizing: border-box; }
+        
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1>🚀 Большая Энциклопедия IT</h1>
+        <p>Аппаратное обеспечение, Софт, Сети и Код — всё в одном месте.</p>
+    </header>
+
+    <div class="container">
+        
+        <div class="controls">
+            <input type="text" id="searchInput" placeholder="🔍 Найти термин (например, Процессор, IP, Вирус)..." onkeyup="filterContent()">
+            <a href="quiz.html" class="btn btn-game">🎮 Играть в Quiz</a>
+            <button class="btn btn-add" onclick="openModal()">➕ Добавить</button>
+
+            <div class="categories-nav">
+                <button class="btn btn-cat active" onclick="setCategory('all')">Все</button>
+                <button class="btn btn-cat" onclick="setCategory('hardware')">🖥️ Железо</button>
+                <button class="btn btn-cat" onclick="setCategory('software')">💾 Софт</button>
+                <button class="btn btn-cat" onclick="setCategory('algo')">🧮 Алгоритмы</button>
+                <button class="btn btn-cat" onclick="setCategory('network')">🌐 Сети</button>
+                <button class="btn btn-cat" onclick="setCategory('security')">🔒 Безопасность</button>
+            </div>
+        </div>
+
+        <div id="gridArea" class="grid">
+            
+            <div class="card" data-category="hardware">
+                <img src="https://placehold.co/600x400/3182ce/white?text=CPU+Processor" alt="CPU" class="card-img">
+                <div class="card-content">
+                    <h3>Центральный процессор (CPU)</h3>
+                    <p>"Мозг" компьютера. Выполняет арифметические и логические операции. Основные характеристики: частота (ГГц) и количество ядер.</p>
+                    <span class="badge bg-hard">#Железо</span>
+                </div>
+            </div>
+
+            <div class="card" data-category="hardware">
+                <img src="https://placehold.co/600x400/3182ce/white?text=RAM+Memory" alt="RAM" class="card-img">
+                <div class="card-content">
+                    <h3>Оперативная память (RAM)</h3>
+                    <p>Сверхбыстрая энергозависимая память. Хранит данные запущенных программ. При выключении ПК очищается.</p>
+                    <span class="badge bg-hard">#Железо</span>
+                </div>
+            </div>
+
+            <div class="card" data-category="hardware">
+                <img src="https://placehold.co/600x400/3182ce/white?text=SSD+Drive" alt="SSD" class="card-img">
+                <div class="card-content">
+                    <h3>SSD Диск</h3>
+                    <p>Твердотельный накопитель. Работает быстрее старых HDD, так как не имеет движущихся частей. Использует флеш-память.</p>
+                    <span class="badge bg-hard">#Железо</span>
+                </div>
+            </div>
+
+            <div class="card" data-category="hardware">
+                <img src="https://placehold.co/600x400/3182ce/white?text=Motherboard" alt="Motherboard" class="card-img">
+                <div class="card-content">
+                    <h3>Материнская плата</h3>
+                    <p>Главная плата, к которой подключаются все устройства: процессор, видеокарта, память и периферия.</p>
+                    <span class="badge bg-hard">#Железо</span>
+                </div>
+            </div>
+
+            <div class="card" data-category="software">
+                <img src="https://placehold.co/600x400/e53e3e/white?text=OS+Windows+Linux" alt="OS" class="card-img">
+                <div class="card-content">
+                    <h3>Операционная система</h3>
+                    <p>Комплекс программ, управляющий ресурсами компьютера и обеспечивающий интерфейс для пользователя (Windows, macOS, Linux).</p>
+                    <span class="badge bg-soft">#Софт</span>
+                </div>
+            </div>
+
+            <div class="card" data-category="software">
+                <img src="https://placehold.co/600x400/e53e3e/white?text=Drivers" alt="Drivers" class="card-img">
+                <div class="card-content">
+                    <h3>Драйвер</h3>
+                    <p>Утилита, которая "учит" операционную систему работать с конкретным оборудованием (например, с принтером или видеокартой).</p>
+                    <span class="badge bg-soft">#Софт</span>
+                </div>
+            </div>
+            
+            <div class="card" data-category="algo">
+                <img src="https://placehold.co/600x400/d69e2e/white?text=Algorithm" alt="Algo" class="card-img">
+                <div class="card-content">
+                    <h3>Алгоритм</h3>
+                    <p>Точная последовательность действий, приводящая к решению задачи за конечное число шагов.</p>
+                    <span class="badge bg-algo">#Логика</span>
+                </div>
+            </div>
+
+            <div class="card" data-category="algo">
+                <img src="https://placehold.co/600x400/d69e2e/white?text=Loop+Cycle" alt="Loop" class="card-img">
+                <div class="card-content">
+                    <h3>Цикл (Loop)</h3>
+                    <p>Конструкция в программировании, позволяющая выполнять блок кода многократно, пока выполняется условие.</p>
+                    <span class="badge bg-algo">#Код</span>
+                </div>
+            </div>
+
+            <div class="card" data-category="algo">
+                <img src="https://placehold.co/600x400/d69e2e/white?text=Variable" alt="Var" class="card-img">
+                <div class="card-content">
+                    <h3>Переменная</h3>
+                    <p>Именованная область памяти, в которой хранится значение (число, текст), которое может меняться в процессе работы программы.</p>
+                    <span class="badge bg-algo">#Код</span>
+                </div>
+            </div>
+
+            <div class="card" data-category="network">
+                <img src="https://placehold.co/600x400/805ad5/white?text=IP+Address" alt="IP" class="card-img">
+                <div class="card-content">
+                    <h3>IP-адрес</h3>
+                    <p>Уникальный числовой идентификатор устройства в компьютерной сети. Похож на почтовый адрес, но для интернета.</p>
+                    <span class="badge bg-net">#Сети</span>
+                </div>
+            </div>
+
+            <div class="card" data-category="network">
+                <img src="https://placehold.co/600x400/805ad5/white?text=Server" alt="Server" class="card-img">
+                <div class="card-content">
+                    <h3>Сервер</h3>
+                    <p>Мощный компьютер, который хранит данные веб-сайтов, файлы или игры и предоставляет доступ к ним другим пользователям.</p>
+                    <span class="badge bg-net">#Сети</span>
+                </div>
+            </div>
+
+             <div class="card" data-category="network">
+                <img src="https://placehold.co/600x400/805ad5/white?text=Wi-Fi+Router" alt="Router" class="card-img">
+                <div class="card-content">
+                    <h3>Маршрутизатор (Роутер)</h3>
+                    <p>Устройство, которое пересылает пакеты данных между различными сетями (например, между интернетом и твоим домашним Wi-Fi).</p>
+                    <span class="badge bg-net">#Сети</span>
+                </div>
+            </div>
+
+            <div class="card" data-category="security">
+                <img src="https://placehold.co/600x400/38a169/white?text=Phishing" alt="Phishing" class="card-img">
+                <div class="card-content">
+                    <h3>Фишинг</h3>
+                    <p>Вид интернет-мошенничества, цель которого — получить доступ к логинам и паролям пользователей с помощью поддельных сайтов.</p>
+                    <span class="badge bg-sec">#Безопасность</span>
+                </div>
+            </div>
+
+            <div class="card" data-category="security">
+                <img src="https://placehold.co/600x400/38a169/white?text=Firewall" alt="Firewall" class="card-img">
+                <div class="card-content">
+                    <h3>Брандмауэр (Firewall)</h3>
+                    <p>Сетевой экран, который контролирует и фильтрует сетевой трафик, защищая компьютер от несанкционированного доступа.</p>
+                    <span class="badge bg-sec">#Безопасность</span>
+                </div>
+            </div>
+
+            <div class="card" data-category="security">
+                <img src="https://placehold.co/600x400/38a169/white?text=Password" alt="Password" class="card-img">
+                <div class="card-content">
+                    <h3>Двухфакторная аутентификация</h3>
+                    <p>Метод защиты, когда для входа нужно два подтверждения: пароль и код из СМС или приложения.</p>
+                    <span class="badge bg-sec">#Безопасность</span>
+                </div>
+            </div>
+
+        </div> </div>
+
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2>➕ Добавить свою запись</h2>
+            
+            <div class="form-group">
+                <label>Название термина:</label>
+                <input type="text" id="newTitle" class="form-control" placeholder="Например: Облачное хранилище">
+            </div>
+
+            <div class="form-group">
+                <label>Описание:</label>
+                <textarea id="newDesc" class="form-control" rows="3" placeholder="Что это такое?"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Категория:</label>
+                <select id="newCat" class="form-control">
+                    <option value="hardware">🖥️ Железо</option>
+                    <option value="software">💾 Софт</option>
+                    <option value="algo">🧮 Алгоритмы</option>
+                    <option value="network">🌐 Сети</option>
+                    <option value="security">🔒 Безопасность</option>
+                </select>
+            </div>
+
+            <button class="btn btn-add" style="width: 100%" onclick="addItem()">Сохранить</button>
+        </div>
+    </div>
+
+    <script>
+        let currentCategory = 'all';
+
+        // --- 1. ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ ---
+        function setCategory(cat) {
+            currentCategory = cat;
+            
+            // Обновляем кнопки
+            document.querySelectorAll('.btn-cat').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            applyFilters();
+        }
+
+        // --- 2. ПОИСК И ПРИМЕНЕНИЕ ФИЛЬТРОВ ---
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.card');
+
+            cards.forEach(card => {
+                const cat = card.getAttribute('data-category');
+                const title = card.querySelector('h3').innerText.toLowerCase();
+                const desc = card.querySelector('p').innerText.toLowerCase();
+                
+                // Проверяем категорию
+                const matchCat = (currentCategory === 'all' || cat === currentCategory);
+                // Проверяем поиск
+                const matchSearch = (title.includes(search) || desc.includes(search));
+
+                if (matchCat && matchSearch) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function filterContent() {
+            applyFilters();
+        }
+
+        // --- 3. МОДАЛЬНОЕ ОКНО ---
+        function openModal() { document.getElementById('addModal').style.display = 'block'; }
+        function closeModal() { document.getElementById('addModal').style.display = 'none'; }
+        
+        window.onclick = function(e) {
+            if (e.target == document.getElementById('addModal')) closeModal();
+        }
+
+        // --- 4. ДОБАВЛЕНИЕ НОВОЙ КАРТОЧКИ ---
+        function addItem() {
+            const title = document.getElementById('newTitle').value;
+            const desc = document.getElementById('newDesc').value;
+            const cat = document.getElementById('newCat').value;
+
+            if(!title || !desc) { alert('Заполните все поля!'); return; }
+
+            // Создаем HTML новой карточки
+            const grid = document.getElementById('gridArea');
+            
+            // Выбираем цвет заглушки в зависимости от категории
+            let color = '718096';
+            if(cat === 'hardware') color = '3182ce';
+            if(cat === 'software') color = 'e53e3e';
+            if(cat === 'algo') color = 'd69e2e';
+            if(cat === 'network') color = '805ad5';
+            if(cat === 'security') color = '38a169';
+
+            const newCard = document.createElement('div');
+            newCard.className = 'card';
+            newCard.setAttribute('data-category', cat);
+            newCard.innerHTML = `
+                <img src="https://placehold.co/600x400/${color}/white?text=${encodeURIComponent(title)}" class="card-img">
+                <div class="card-content">
+                    <h3>${title}</h3>
+                    <p>${desc}</p>
+                    <span class="badge bg-user">#Пользовательское</span>
+                </div>
+            `;
+
+            // Добавляем в начало
+            grid.insertBefore(newCard, grid.firstChild);
+
+            closeModal();
+            // Очистка полей
+            document.getElementById('newTitle').value = '';
+            document.getElementById('newDesc').value = '';
+        }
+    </script>
+
+</body>
+</html>
