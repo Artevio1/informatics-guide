@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мини-игра: Проверь знания</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .quiz-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #f39c12;
+            border-bottom: 2px solid #f39c12;
+            padding-bottom: 10px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            width: 80%;
+            margin-top: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-top: 15px;
+            background-color: #3949ab;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #303f9f;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 25px;
+            color: #5c6bc0;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <h2>🧠 Мини-игра: Угадай термин</h2>
+        <p id="question">Что является "мозгом" компьютера и выполняет все вычисления?</p>
+        
+        <input type="text" id="answerInput" placeholder="Введите ответ">
+        <button onclick="checkAnswer()">Проверить</button>
+        
+        <div id="result"></div>
+
+        <a href="informatics_guide_v3.html" class="back-link">← Вернуться в справочник</a>
+    </div>
+
+    <script>
+        const correctAnswer = "процессор"; // Ответ, который должен ввести пользователь
+
+        function checkAnswer() {
+            const input = document.getElementById('answerInput').value.trim().toLowerCase();
+            const resultDiv = document.getElementById('result');
+
+            if (input === correctAnswer) {
+                resultDiv.textContent = "✅ Верно! Ты отлично знаешь аппаратное обеспечение.";
+                resultDiv.style.color = "green";
+            } else if (input === 'цпу' || input === 'cpu') {
+                resultDiv.textContent = "✅ Технически верно! (Сокращение от Центральный процессор)";
+                resultDiv.style.color = "green";
+            } else {
+                resultDiv.textContent = "❌ Неверно. Попробуй еще раз или проверь раздел 'Аппаратное обеспечение'.";
+                resultDiv.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>
