@@ -3,291 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎮 IT-Викторина: Проверь себя</title>
+    <title>IT Викторина: Базовый Уровень (Финальный Рефакторинг)</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Тот же фон, что в шапке главного сайта */
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #333;
+        /* Стили CSS остаются прежними */
+        :root {
+            --primary: #FFC107; 
+            --secondary: #FFB300; 
+            --accent: #03A9F4; 
+            --danger: #EF5350; 
+            --bg: #1A1A2E;
+            --text-main: #EAEAEA;
+            --card-bg: #2C2C4E;
         }
 
-        .quiz-container {
-            background-color: white;
-            width: 90%;
-            max-width: 600px;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
+        body { font-family: 'Inter', sans-serif; margin: 0; background-color: var(--bg); color: var(--text-main); line-height: 1.6; padding: 40px 20px; }
 
-        /* Шапка вопроса */
-        h2 { margin-top: 0; color: #4a5568; }
+        .quiz-container { max-width: 800px; margin: 0 auto; }
         
-        /* Прогресс бар */
-        .progress-bar {
-            width: 100%;
-            height: 10px;
-            background-color: #e2e8f0;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            overflow: hidden;
+        .quiz-header {
+            background: linear-gradient(135deg, #1f4068 0%, #102030 100%);
+            color: var(--primary); padding: 30px; border-radius: 15px 15px 0 0;
+            text-align: center; border: 2px solid var(--primary);
         }
-        .progress-fill {
-            height: 100%;
-            background-color: #48bb78;
-            width: 0%;
-            transition: width 0.3s ease;
+        .quiz-header h1 { margin: 0; font-size: 2.5em; color: white; }
+        .stats { color: var(--primary); font-weight: 700; }
+
+        .quiz-body { background: var(--card-bg); padding: 30px; border-radius: 0 0 15px 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+        .question-box { margin-bottom: 30px; padding: 20px; border: 2px solid #374151; border-radius: 10px; }
+        .question-box h2 { color: var(--primary); margin-top: 0; font-size: 1.5em; }
+        
+        .answer-option {
+            background: #374151; color: var(--text-main); border: 2px solid #4b5563;
+            padding: 15px; margin-bottom: 10px; border-radius: 8px;
+            cursor: pointer; transition: all 0.2s; font-weight: 600;
         }
-
-        /* Картинка вопроса */
-        .question-img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            background-color: #cbd5e0;
-        }
-
-        .question-text {
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-bottom: 25px;
-            min-height: 60px; /* Чтобы не прыгало */
-        }
-
-        /* Кнопки ответов */
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .option-btn {
-            background-color: #edf2f7;
-            border: 2px solid transparent;
-            padding: 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: all 0.2s;
-            color: #2d3748;
-        }
-
-        .option-btn:hover:not([disabled]) {
-            background-color: #e2e8f0;
-            transform: translateY(-2px);
-        }
-
-        /* Состояния кнопок (Правильно/Неправильно) */
-        .correct { background-color: #c6f6d5 !important; border-color: #48bb78 !important; color: #22543d; }
-        .wrong { background-color: #fed7d7 !important; border-color: #f56565 !important; color: #742a2a; }
-
-        /* Кнопки управления */
-        .controls { margin-top: 25px; display: flex; justify-content: space-between; align-items: center;}
+        .answer-option:hover:not(.disabled) { background: #4b5563; border-color: var(--primary); }
+        .answer-option.correct { background: var(--accent); border-color: #0288D1; color: white; }
+        .answer-option.wrong { background: var(--danger); border-color: #D32F2F; color: white; }
+        .answer-option.disabled { pointer-events: none; opacity: 0.8; }
         
         .btn-next {
-            background-color: #667eea;
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1rem;
-            display: none; /* Скрыта пока не ответишь */
+            display: block; width: 100%; padding: 15px; margin-top: 20px;
+            background: var(--primary); color: var(--bg); border: none; border-radius: 8px;
+            font-size: 1.2em; font-weight: 700; cursor: pointer; transition: background 0.3s;
         }
-        .btn-home {
-            text-decoration: none;
-            color: #718096;
-            font-size: 0.9em;
-        }
-
-        /* Экран результата */
-        #result-screen { display: none; }
-        .score-big { font-size: 3em; font-weight: bold; color: #667eea; margin: 20px 0; }
-
-        /* Адаптив для телефонов */
-        @media (max-width: 500px) {
-            .options-grid { grid-template-columns: 1fr; }
-        }
+        .btn-next:hover { background: var(--secondary); }
+        
+        .results-screen { text-align: center; padding: 40px; }
+        .results-screen h2 { color: var(--accent); font-size: 3em; }
+        .btn-home { background: #4caf50; color: white; text-decoration: none; padding: 12px 25px; border-radius: 8px; font-weight: 600; margin-top: 20px; display: inline-block; }
     </style>
 </head>
 <body>
 
     <div class="quiz-container">
-        
-        <div id="game-screen">
-            <div class="progress-bar"><div id="progress" class="progress-fill"></div></div>
-            
-            <img id="q-image" src="" class="question-img" alt="Question Image">
-            <div id="q-text" class="question-text">Загрузка вопроса...</div>
-
-            <div id="options" class="options-grid">
-                </div>
-
-            <div class="controls">
-                <span id="question-number">Вопрос 1 из 7</span>
-                <button id="next-btn" class="btn-next" onclick="nextQuestion()">Дальше ➡</button>
+        <header class="quiz-header">
+            <h1>IT Тест (Основы)</h1>
+            <p class="stats">Проверьте знание фундаментальных понятий</p>
+            <div class="stats">
+                <span>Вопрос: <span id="currentQuestionNum">1</span> / <span id="totalQuestionsNum">10</span></span>
+                <span>✅ Правильно: <span id="score">0</span></span>
             </div>
-        </div>
+        </header>
 
-        <div id="result-screen">
-            <h2>🎉 Викторина завершена!</h2>
-            <img src="https://placehold.co/600x300/f6ad55/white?text=Victory!" class="question-img" style="height: 150px;">
-            <p>Твой результат:</p>
-            <div id="final-score" class="score-big">0 / 7</div>
-            <p id="feedback-text">Неплохо!</p>
+        <main class="quiz-body">
+            <div id="quizContent">
+                </div>
             
-            <br>
-            <button class="option-btn" style="background: #667eea; color: white; width: 100%;" onclick="location.reload()">🔄 Сыграть снова</button>
-            <br><br>
-            <a href="informatics_guide_final.html" class="btn-home">⬅ Вернуться в энциклопедию</a>
-        </div>
-
+            <div id="resultScreen" class="results-screen" style="display:none;">
+                <h2>Тест завершен!</h2>
+                <p>Ваш результат: <span id="finalScore">0</span> из <span id="maxScore">10</span></p>
+                <a href="index.html" class="btn-home"><i class="fas fa-home"></i> Назад в Справочник</a>
+            </div>
+        </main>
     </div>
 
     <script>
-        // --- БАЗА ВОПРОСОВ ---
-        const questions = [
-            {
-                text: "Что называют «мозгом» компьютера?",
-                img: "https://placehold.co/600x400/3182ce/white?text=Computer+Part",
-                options: ["Жесткий диск", "Процессор (CPU)", "Видеокарта", "Блок питания"],
-                correct: 1 // Индекс правильного ответа (начинается с 0)
-            },
-            {
-                text: "Какая память стирается при выключении компьютера?",
-                img: "https://placehold.co/600x400/3182ce/white?text=Memory",
-                options: ["SSD", "Флешка", "HDD", "Оперативная (RAM)"],
-                correct: 3
-            },
-            {
-                text: "Что из этого является Операционной Системой?",
-                img: "https://placehold.co/600x400/e53e3e/white?text=Software",
-                options: ["Google Chrome", "Linux", "Microsoft Word", "Python"],
-                correct: 1
-            },
-            {
-                text: "Как называется уникальный адрес компьютера в сети?",
-                img: "https://placehold.co/600x400/805ad5/white?text=Network",
-                options: ["IP-адрес", "Email", "URL", "GPS"],
-                correct: 0
-            },
-            {
-                text: "Что делает цикл в программировании?",
-                img: "https://placehold.co/600x400/d69e2e/white?text=Code+Loop",
-                options: ["Удаляет программу", "Повторяет действие", "Выключает компьютер", "Рисует круг"],
-                correct: 1
-            },
-            {
-                text: "Фишинг — это...",
-                img: "https://placehold.co/600x400/38a169/white?text=Hacker",
-                options: ["Ловля рыбы в игре", "Вид спорта", "Кража данных через поддельные сайты", "Поломка процессора"],
-                correct: 2
-            },
-            {
-                text: "Какое устройство раздает Wi-Fi?",
-                img: "https://placehold.co/600x400/805ad5/white?text=Wi-Fi",
-                options: ["Принтер", "Сканер", "Роутер (Маршрутизатор)", "Монитор"],
-                correct: 2
-            }
+        // База данных для квиза (Простой уровень)
+        const quizDatabase = [
+            { t: "Процессор (CPU)", a: "Главный 'мозг' компьютера, выполняющий все вычисления.", wrong: ["Устройство для хранения файлов", "Программа для просмотра сайтов", "Беспроводной протокол связи"], c: "hard" },
+            { t: "HTML", a: "Язык разметки, который используется для создания структуры веб-страниц.", wrong: ["Набор команд для управления роботом", "Протокол для защиты данных", "Программа для удаления вирусов"], c: "code" },
+            { t: "Операционная система", a: "Главная программа, управляющая всем оборудованием и запуском других программ.", wrong: ["Место для хранения фотографий в облаке", "Устройство для подключения принтера", "Правило написания чистого кода"], c: "soft" },
+            { t: "Переменная", a: "Именованное место в коде, используемое для временного хранения значений.", wrong: ["Графический элемент на экране", "Часть жесткого диска", "Условие, которое никогда не выполняется"], c: "code" },
+            { t: "Браузер", a: "Программа для запроса, обработки и отображения веб-страниц.", wrong: ["Устройство для записи звука", "Сетевой кабель", "База данных для хранения паролей"], c: "net" },
+            { t: "Оперативная память (RAM)", a: "Очень быстрая, но временная память для запущенных программ.", wrong: ["Долговременное хранилище файлов", "Программа для печати документов", "Часть материнской платы"], c: "hard" },
+            { t: "Пароль", a: "Секретный набор символов, используемый для подтверждения личности пользователя.", wrong: ["Уникальный адрес сайта", "Тип компьютерного вируса", "Правило организации папок"], c: "security" },
+            { t: "URL", a: "Уникальный адрес, используемый для идентификации ресурса в интернете (сайта, файла).", wrong: ["Тип шрифта", "Процесс сохранения файла", "Программа для создания таблиц"], c: "net" },
+            { t: "Цикл (Loop)", a: "Конструкция программирования, которая позволяет повторять один и тот же набор действий несколько раз.", wrong: ["Ошибка в коде", "Устройство вывода информации", "Процесс подключения к сети"], c: "code" },
+            { t: "Резервная копия (Backup)", a: "Копия данных, которая хранится отдельно и может быть использована для восстановления информации при сбое.", wrong: ["Процесс удаления старых файлов", "Быстрый доступ к диску", "Набор правил для веб-сервера"], c: "data" },
+            { t: "CSS", a: "Язык стилей, используемый для описания внешнего вида и оформления веб-страницы.", wrong: ["Язык программирования логики", "База данных для хранения стилей", "Протокол шифрования"], c: "code" },
+            { t: "Антивирус", a: "Программа, предназначенная для обнаружения, предотвращения и удаления вредоносного ПО.", wrong: ["Программа для создания презентаций", "Устройство для подключения к роутеру", "Тип сетевого протокола"], c: "security" }
         ];
 
-        let currentQuestion = 0;
+        let questions = [];
+        let currentQuestionIndex = 0;
+        const totalQuestions = 10; 
         let score = 0;
-        let canAnswer = true;
 
-        // --- ЛОГИКА ИГРЫ ---
-        
-        function loadQuestion() {
-            const q = questions[currentQuestion];
-            const total = questions.length;
+        document.addEventListener('DOMContentLoaded', () => {
+            generateQuestions();
+            if (questions.length !== totalQuestions) {
+                document.getElementById('quizContent').innerHTML = `<h2 style="color:var(--danger)">Критическая ошибка инициализации.</h2>`;
+                return;
+            }
+            loadQuestion();
+            document.getElementById('totalQuestionsNum').innerText = totalQuestions;
+        });
 
-            // Обновляем текст и картинку
-            document.getElementById('q-text').innerText = q.text;
-            document.getElementById('q-image').src = q.img;
-            document.getElementById('question-number').innerText = `Вопрос ${currentQuestion + 1} из ${total}`;
-            
-            // Обновляем прогресс бар
-            const progressPercent = ((currentQuestion) / total) * 100;
-            document.getElementById('progress').style.width = `${progressPercent}%`;
-
-            // Генерируем кнопки
-            const optionsDiv = document.getElementById('options');
-            optionsDiv.innerHTML = ''; // Очистить старые
-            
-            q.options.forEach((option, index) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.innerText = option;
-                btn.onclick = () => checkAnswer(index, btn);
-                optionsDiv.appendChild(btn);
-            });
-
-            // Скрываем кнопку "Дальше"
-            document.getElementById('next-btn').style.display = 'none';
-            canAnswer = true;
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
         }
 
-        function checkAnswer(selectedIndex, btnElement) {
-            if (!canAnswer) return; // Защита от повторного нажатия
-            canAnswer = false;
+        function generateQuestions() {
+            let shuffledDatabase = [...quizDatabase];
+            shuffleArray(shuffledDatabase);
+            
+            questions = shuffledDatabase.slice(0, totalQuestions);
 
-            const correctIndex = questions[currentQuestion].correct;
-            const allButtons = document.querySelectorAll('.option-btn');
+            questions.forEach(q => {
+                const answers = [q.a, ...q.wrong];
+                shuffleArray(answers);
+                q.options = answers;
+            });
+        }
 
-            if (selectedIndex === correctIndex) {
-                // Правильно!
-                btnElement.classList.add('correct');
-                score++;
-            } else {
-                // Неправильно!
-                btnElement.classList.add('wrong');
-                // Подсветить правильный ответ, чтобы игрок знал
-                allButtons[correctIndex].classList.add('correct');
+        function loadQuestion() {
+            if (currentQuestionIndex >= totalQuestions) {
+                showResults();
+                return;
             }
 
-            // Блокируем все кнопки
-            allButtons.forEach(btn => btn.disabled = true);
+            const q = questions[currentQuestionIndex];
+            const quizContent = document.getElementById('quizContent');
+            quizContent.innerHTML = `
+                <div class="question-box">
+                    <h2>${currentQuestionIndex + 1}. Что из перечисленного лучше всего описывает **${q.t}**?</h2>
+                    <div id="answerOptions">
+                        ${q.options.map((option, index) => `
+                            <div class="answer-option" data-answer="${option}">
+                                ${option}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <button id="nextBtn" class="btn-next" style="display:none;">
+                    ${currentQuestionIndex === totalQuestions - 1 ? 'Показать результат' : 'Далее'} <i class="fas fa-arrow-right"></i>
+                </button>
+            `;
+            
+            // 💡 НОВЫЙ МЕТОД: Устанавливаем обработчики событий после создания DOM
+            document.querySelectorAll('.answer-option').forEach(option => {
+                option.addEventListener('click', () => checkAnswer(option, q.a));
+            });
+            document.getElementById('nextBtn').addEventListener('click', nextQuestion);
 
-            // Показываем кнопку Дальше
-            document.getElementById('next-btn').style.display = 'block';
+
+            document.getElementById('currentQuestionNum').innerText = currentQuestionIndex + 1;
+        }
+
+        function checkAnswer(selectedElement, correctAnswer) {
+            // Защита от двойного нажатия и сбоев:
+            // Сначала отключаем все кнопки ответов
+            document.querySelectorAll('.answer-option').forEach(opt => opt.classList.add('disabled'));
+            
+            const selectedAnswer = selectedElement.getAttribute('data-answer');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (selectedAnswer === correctAnswer) {
+                selectedElement.classList.add('correct');
+                score++;
+                document.getElementById('score').innerText = score;
+            } else {
+                selectedElement.classList.add('wrong');
+                // Визуальное выделение правильного ответа
+                document.querySelector(`.answer-option[data-answer="${correctAnswer}"]`).classList.add('correct');
+            }
+
+            nextBtn.style.display = 'block'; 
         }
 
         function nextQuestion() {
-            currentQuestion++;
-            
-            if (currentQuestion < questions.length) {
-                loadQuestion();
-            } else {
-                showResult();
+            // Проверка на конец викторины перед переходом
+            if (currentQuestionIndex === totalQuestions - 1) {
+                showResults();
+                return;
             }
+            
+            currentQuestionIndex++;
+            loadQuestion(); 
         }
 
-        function showResult() {
-            document.getElementById('game-screen').style.display = 'none';
-            document.getElementById('result-screen').style.display = 'block';
+        function showResults() {
+            document.getElementById('quizContent').style.display = 'none';
             
-            document.getElementById('final-score').innerText = `${score} / ${questions.length}`;
+            const resultScreen = document.getElementById('resultScreen');
+            resultScreen.style.display = 'block';
             
-            // Комментарий к оценке
-            const feedback = document.getElementById('feedback-text');
-            if (score === questions.length) feedback.innerText = "🏆 Ты гений информатики!";
-            else if (score > 4) feedback.innerText = "😎 Отличный результат!";
-            else feedback.innerText = "📚 Стоит повторить теорию...";
+            document.getElementById('finalScore').innerText = score;
+            document.getElementById('maxScore').innerText = totalQuestions;
         }
-
-        // Запуск первого вопроса
-        loadQuestion();
-
     </script>
 </body>
 </html>

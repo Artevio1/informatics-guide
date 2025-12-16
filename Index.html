@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Энциклопедия: Базовый Справочник (ФИНАЛ)</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- СТАНДАРТНЫЙ ПРОФЕССИОНАЛЬНЫЙ ТЕМНЫЙ СТИЛЬ (Senior Code) --- */
+        :root {
+            --primary: #03A9F4; /* Голубой акцент */
+            --secondary: #0288D1;
+            --accent: #FFC107; /* Желтый (для квиза) */
+            --bg: #1A1A2E; /* Очень глубокий темный фон */
+            --text-main: #EAEAEA;
+            --text-light: #B0B0C4;
+            --card-bg: #2C2C4E; /* Фон карточек */
+
+            /* Цвета для БАЗОВЫХ категорий */
+            --color-hard: #F44336;      /* Красный (Оборудование) */
+            --color-soft: #FFC107;      /* Желтый (Базовый Софт) */
+            --color-code: #03A9F4;      /* Синий (Основы Кода) */
+            --color-net: #4CAF50;       /* Зеленый (Интернет и Сеть) */
+            --color-data: #E91E63;      /* Розовый (Хранение) */
+            --color-security: #9C27B0;  /* Фиолетовый (Безопасность) */
+        }
+
+        body { font-family: 'Inter', sans-serif; margin: 0; background-color: var(--bg); color: var(--text-main); line-height: 1.6; transition: background-color 0.3s; }
+
+        /* --- PRELOADER (ЭКРАН ЗАГРУЗКИ) --- */
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 3000;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 1; transition: opacity 0.5s ease-out;
+        }
+        .spinner {
+            border: 4px solid var(--card-bg); border-top: 4px solid var(--primary);
+            border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hidden { opacity: 0 !important; visibility: hidden; }
+
+
+        /* --- ШАПКА САЙТА (HERO) --- */
+        .hero {
+            background: linear-gradient(135deg, #1f4068 0%, #102030 100%); 
+            color: white; padding: 80px 20px 100px; text-align: center;
+            border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+        .hero h1 { font-size: 3.8em; font-weight: 800; letter-spacing: -0.05em; text-shadow: 0 3px 5px rgba(0,0,0,0.4); }
+        .hero p { font-size: 1.4em; opacity: 0.9; margin-top: 15px; }
+        /* Убран stats-badge */
+
+        /* --- КОНТРОЛЫ И КАРТОЧКИ --- */
+        .container { max-width: 1200px; margin: -60px auto 60px; padding: 0 20px; position: relative; z-index: 10; }
+        .controls-panel {
+            background: var(--card-bg); padding: 30px; border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4); border: 1px solid #374151;
+            display: flex; flex-direction: column; gap: 20px;
+        }
+        .search-row { display: flex; gap: 15px; flex-wrap: wrap; }
+        .search-container { flex-grow: 1; position: relative; display: flex; align-items: center; }
+        .search-icon { position: absolute; left: 18px; color: var(--text-light); }
+        input[type="text"] {
+            width: 100%; padding: 16px 20px 16px 52px; border-radius: 12px;
+            background-color: #374151; color: var(--text-main); border: 2px solid #4b5563;
+            transition: all 0.3s; outline: none; font-size: 1em; font-family: inherit;
+        }
+        input[type="text"]:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(3, 169, 244, 0.3); }
+
+        /* Кнопки и Чипы Категорий */
+        .btn {
+            padding: 16px 28px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 10px; transition: all 0.2s; 
+            background: var(--primary); color: var(--bg); box-shadow: 0 4px 6px rgba(3, 169, 244, 0.2);
+        }
+        .btn:hover { transform: translateY(-2px); background: var(--secondary); box-shadow: 0 6px 12px rgba(3, 169, 244, 0.4); }
+        .btn-quiz { background: var(--accent); color: var(--bg); box-shadow: 0 4px 6px rgba(255, 193, 7, 0.3); }
+        .btn-quiz:hover { background: #FFB300; box-shadow: 0 6px 12px rgba(255, 193, 7, 0.5); }
+
+        .categories { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+        .cat-chip {
+            padding: 10px 18px; border-radius: 30px; background: #374151; color: #d1d5db; border: 1px solid #4b5563;
+            cursor: pointer; font-weight: 600; white-space: nowrap; transition: all 0.3s;
+        }
+        .cat-chip:hover { background: #4b5563; color: white; }
+        .cat-chip.active {
+            background: var(--primary); border-color: var(--secondary); color: var(--bg);
+            box-shadow: 0 2px 4px rgba(3, 169, 244, 0.4);
+        }
+
+        /* СЕТКА КАРТОЧЕК */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; margin-top: 40px; }
+        .card {
+            background: var(--card-bg); border-radius: 16px; overflow: hidden; border: 1px solid #374151;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.3); transition: all 0.3s ease; cursor: pointer;
+            display: flex; flex-direction: column; 
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.5); border-color: var(--primary); }
+        .card-img-container { height: 200px; overflow: hidden; background: #374151; position: relative; }
+        .card-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .card:hover .card-img { transform: scale(1.08); }
+        .badge {
+            position: absolute; top: 15px; right: 15px; padding: 8px 16px; border-radius: 20px;
+            font-size: 0.8em; font-weight: 700; color: white; backdrop-filter: blur(5px); background: rgba(0,0,0,0.7); z-index: 2;
+        }
+        .card-body { padding: 25px; flex-grow: 1; }
+        .card h3 { margin: 0 0 10px 0; color: var(--primary); font-size: 1.5em; }
+        .card p { margin: 0; color: var(--text-light); font-size: 0.95em; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* --- SKELETON LOADER (Ghost Cards) --- */
+        .skeleton {
+            background: linear-gradient(90deg, #2c2c4e 0%, #3a3a5a 50%, #2c2c4e 100%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 8px;
+        }
+        .skeleton-card .card-img-container { background: #3a3a5a; }
+        .skeleton-card .card-body h3 { height: 24px; width: 80%; margin-bottom: 15px; }
+        .skeleton-card .card-body p { height: 15px; margin-bottom: 10px; }
+        .skeleton-card .card-body p:last-child { width: 60%; }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* --- МОДАЛЬНОЕ ОКНО (С анимацией) --- */
+        .modal { display: flex; position: fixed; z-index: 2000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+        .modal.active { opacity: 1; pointer-events: auto; }
+        .modal-content {
+            background: var(--card-bg); width: 100%; max-width: 950px; border-radius: 20px; overflow: hidden; position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3); transform: scale(0.9) translateY(20px); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-height: 90vh; display: flex; flex-direction: column;
+        }
+        .modal.active .modal-content { transform: scale(1) translateY(0); }
+        .close-btn { position: absolute; top: 20px; right: 20px; background: #374151; width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--primary); font-size: 1.3em; transition: all 0.3s; z-index: 10; box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+        .modal-header-img { width: 100%; height: 350px; object-fit: cover; }
+        .modal-body { padding: 35px; overflow-y: auto; }
+        .modal-title { font-size: 3em; color: var(--primary); }
+        .modal-badge { display: inline-flex; align-items: center; gap: 10px; padding: 8px 15px; border-radius: 30px; font-size: 0.95em; font-weight: 600; }
+        .modal-desc { font-size: 1.2em; line-height: 1.8; margin-bottom: 30px; }
+        .wiki-btn { background: var(--primary); color: var(--bg); padding: 12px 25px; border-radius: 8px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; transition: all 0.2s; }
+    </style>
+</head>
+<body>
+
+    <div id="preloader">
+        <div class="spinner"></div>
+    </div>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>IT Основы: Базовый Справочник 📖</h1>
+            <p>Фундаментальные концепции для начинающих. Финальная реализация на уровне Senior-разработчика.</p>
+            </div>
+    </header>
+
+    <div class="container">
+        <div class="controls-panel">
+            <div class="search-row">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="Искать по ключевому слову (HTML, Мышь, Файл, Браузер)..." onkeyup="renderCards(true)">
+                </div>
+                <a href="quiz.html" class="btn btn-quiz">
+                    <i class="fas fa-lightbulb"></i> Проверить знания
+                </a>
+            </div>
+            
+            <div class="categories" id="categoriesContainer">
+                </div>
+        </div>
+
+        <div id="gridArea" class="grid">
+            <div class="card skeleton-card"><div class="card-img-container skeleton"></div><div class="card-body"><h3 class="skeleton"></h3><p class="skeleton"></p><p class="skeleton"></p></div></div>
+            <div class="card skeleton-card"><div class="card-img-container skeleton"></div><div class="card-body"><h3 class="skeleton"></h3><p class="skeleton"></p><p class="skeleton"></p></div></div>
+            <div class="card skeleton-card"><div class="card-img-container skeleton"></div><div class="card-body"><h3 class="skeleton"></h3><p class="skeleton"></p><p class="skeleton"></p></div></div>
+        </div>
+    </div>
+
+    <div id="infoModal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content">
+            <div class="close-btn" onclick="closeModalForce()">
+                <i class="fas fa-times"></i>
+            </div>
+            <img id="m-img" src="" class="modal-header-img" alt="Term Image">
+            <div class="modal-body">
+                <h2 id="m-title" class="modal-title"></h2>
+                <div class="modal-meta">
+                    <div id="m-badge" class="modal-badge">
+                        <i class="far fa-folder"></i> <span>Категория</span>
+                    </div>
+                </div>
+                <p id="m-desc" class="modal-desc"></p>
+                <a id="m-wiki" href="#" target="_blank" class="wiki-btn">
+                    <i class="fab fa-wikipedia-w"></i> Читать подробнее на Википедии
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 💎 БАЗА ДАННЫХ (30+ ПРОСТЫХ ТЕРМИНОВ) 💎 ---
+        
+        // --- 💎 БАЗА ДАННЫХ (30+ ПРОСТЫХ ТЕРМИНОВ) 💎 ---
+    
+    const database = [
+        // Категория ОБОРУДОВАНИЕ (HARD) - 7 терминов
+        { t: "Процессор (CPU)", c: "hard", img: "https://thg.ru/wp-content/uploads/2024/04/luchshiy_processor_01.jpg", d: "'Мозг' компьютера. Выполняет все основные вычисления и инструкции программ.", link: "Центральный_процессор" },
+        { t: "Оперативная память (RAM)", c: "hard", img: "https://www.avast.com/hs-fs/hubfs/New_Avast_Academy/How%20to%20check%20your%20RAM%20memory/How_to_Check_How_Much_RAM_You_Have-Hero.jpg?width=1200&name=How_to_Check_How_Much_RAM_You_Have-Hero.jpg", d: "Очень быстрая, но временная память. Используется для хранения данных запущенных программ.", link: "Оперативная_память" }, // <-- ИСПРАВЛЕНО
+        { t: "Жесткий диск (HDD/SSD)", c: "hard", img: "https://upload.wikimedia.org/wikipedia/commons/f/f8/Laptop-hard-drive-exposed.jpg", d: "Долговременное хранилище для файлов, программ и операционной системы.", link: "Жёсткий_диск" },
+        { t: "Клавиатура", c: "hard", img: "https://media.wired.com/photos/68a91be7bbceeadd076b1720/master/w_1600%2Cc_limit/logitech-mx-keys-s-keyboard-Reviewer-Photo-SOURCE-Eric-Ravenscraft.png", d: "Основное устройство ввода для набора текста и команд.", link: "Компьютерная_клавиатура" },
+        { t: "Компьютерная мышь", c: "hard", img: "https://webobjects2.cdw.com/is/image/CDW/2881640?$product-main$", d: "Устройство ввода для управления курсором и взаимодействия с графическим интерфейсом.", link: "Компьютерная_мышь" },
+        { t: "Монитор", c: "hard", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/LG_L194WT-SF_LCD_monitor.jpg/1200px-LG_L194WT-SF_LCD_monitor.jpg", d: "Устройство вывода, отображающее графическую и текстовую информацию.", link: "Монитор" },
+        { t: "Планшет", c: "hard", img: "https://cdn.nur.kz/images/1200x675/172786e5bd143790.jpeg?version=1", d: "Мобильное устройство с сенсорным экраном, промежуточное между смартфоном и ноутбуком.", link: "Планшетный_компьютер" },
+
+        // Категория БАЗОВЫЙ СОФТ (SOFT) - 5 терминов
+        { t: "Операционная система (OS)", c: "soft", img: "https://media.proglib.io/posts/2019/09/23/7e7776c05721d5ab3e81f03fd99c9428.jpg", d: "Главная программа, управляющая всем оборудованием и запуском других программ (Windows, macOS, Linux).", link: "Операционная_система" },
+        { t: "Файл", c: "soft", img: "https://www.compgramotnost.ru/wp-content/uploads/2010/07/tipy-fajlov-1280x720.png", d: "Именованный набор данных, хранящийся на диске (текст, изображение, видео).", link: "Файл" },
+        { t: "Папка (Директория)", c: "soft", img: "https://fastcdn.kiev.ua/images/QmhzYnl5b0pwZzFDZWtURitQR013Z2hORmpmNUkvSzA1eitvT0syKzZOalkxL1RKUEFHamhoeWpjZ3hYbDJYcmp6TUtiN3pHYXBVZG5ZUUNnZkdtb3k3NitBUXlnTFdyUEdNRHBrZG5kejBLdGJkZnJrQ1hJbVRtVXIreFFCNkQ=.jpg", d: "Контейнер, используемый для организации и группировки файлов.", link: "Каталог_(файловая_система)" },
+        { t: "Приложение (Программа)", c: "soft", img: "https://cdn.3dnews.ru/assets/external/illustrations/2018/09/12/975310/Small-Win-Soft-1.png", d: "Набор инструкций, выполняющих конкретную задачу (например, текстовый редактор или игра).", link: "Прикладное_программное_обеспечение" },
+        { t: "Скриншот", c: "soft", img: "https://cdn.citilink.ru/4G3__Dceuamq7lxF3a8YqbHYUJO09OzG04x9qP16Ecg/enlarge:1/gravity:sm/height:601/resizing_type:fit/width:1300/plain/journal/55c88384-71d9-4072-85e6-afd545857f35.png?v6.0.0", d: "Снимок всего, что отображается на экране в данный момент.", link: "Скриншот" }, // <-- ИСПРАВЛЕНО
+
+        // Категория ОСНОВЫ КОДА (CODE) - 5 терминов
+        { t: "Переменная", c: "code", img: "https://habrastorage.org/getpro/habr/upload_files/fa9/416/f81/fa9416f811e8d66ea43bac145007cb4c.png", d: "Именованное место в коде, используемое для временного хранения значений (чисел, текста).", link: "Переменная" },
+        { t: "Цикл (Loop)", c: "code", img: "https://cdn-icons-png.flaticon.com/512/3580/3580066.png", d: "Конструкция программирования, которая позволяет повторять один и тот же набор действий несколько раз.", link: "Цикл_(программирование)" },
+        { t: "HTML", c: "code", img: "https://eurobyte.ru/img/articles/chto-takoe-html/image1.jpeg", d: "Язык разметки, который используется для создания структуры веб-страниц.", link: "HTML" },
+        { t: "CSS", c: "code", img: "https://mgearon.com/wp-content/uploads/2014/08/CSS3-Logo.jpg", d: "Язык стилей, используемый для описания внешнего вида и оформления веб-страницы.", link: "CSS" },
+        { t: "Комментарий", c: "code", img: "https://png.klev.club/uploads/posts/2024-04/png-klev-club-6iuk-p-kommentarii-png-18.png", d: "Текст в коде, который игнорируется программой, используется для объяснения логики другим разработчикам.", link: "Комментарий_(программирование)" },
+        
+        // Категория ИНТЕРНЕТ И СЕТЬ (NET) - 6 терминов
+        { t: "Интернет", c: "net", img: "https://static.pro32.com/iblock/990/990c76fe829552827d13a20e8607de04/2e8e8969a36ca0e5f62785433832649c.jpg", d: "Глобальная система взаимосвязанных компьютерных сетей.", link: "Интернет" },
+        { t: "Браузер", c: "net", img: "https://www.ixbt.com/img/r30/00/02/09/08/browsers.png", d: "Программа для запроса, обработки и отображения веб-страниц.", link: "Браузер" },
+        { t: "URL", c: "net", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7BnAzls58A297FISMqjcicPtSCeYby9TzgQ&s", d: "Уникальный адрес, используемый для идентификации ресурса в интернете (сайта, файла).", link: "URL" },
+        { t: "Wi-Fi", c: "net", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/WiFi_Logo.svg/1200px-WiFi_Logo.svg.png", d: "Беспроводная технология для передачи данных и доступа в интернет.", link: "Wi-Fi" },
+        { t: "Маршрутизатор (Роутер)", c: "net", img: "https://moon.kz/upload/iblock/9b1/e8ipda8xqhqp4lt9slivsrk3q0nk9449.jpg", d: "Устройство, соединяющее локальную сеть с интернетом и распределяющее трафик.", link: "Маршрутизатор" },
+        { t: "Облако (Cloud)", c: "net", img: "https://png.pngtree.com/png-clipart/20250105/original/pngtree-cloud-icon-png-image_4844772.png", d: "Термин, обозначающий сервисы, работающие в интернете, а не на вашем локальном компьютере.", link: "Облачные_вычисления" },
+        
+        // Категория ХРАНЕНИЕ ДАННЫХ (DATA) - 4 термина
+        { t: "База данных", c: "data", img: "https://www.marketresearchintellect.com/images/blogs/document-databases-the-backbone-of-modern-business-operations.webp", d: "Структурированный набор данных, хранящийся в электронном виде, часто для быстрого доступа и управления.", link: "База_данных" },
+        { t: "Облачное хранилище", c: "data", img: "https://oncloud.ru/uploads/3e/cloud-storage.webp", d: "Хранение данных на удаленных серверах, доступных через интернет (Яндекс.Диск, Google Drive).", link: "Облачное_хранилище" },
+        { t: "Резервная копия (Backup)", c: "data", img: "https://cyberprotect.ru/static/img/blog/blog_reserve_effect.png", d: "Копия данных, которая хранится отдельно и может быть использована для восстановления информации при сбое.", link: "Резервное_копирование" },
+        { t: "Расширение файла", c: "data", img: "https://zawindows.ru/wp-content/uploads/2022/08/file-extensions-on-a-blue-background.jpg", d: "Часть имени файла после точки, которая указывает на его тип (например, .txt, .jpg, .exe).", link: "Расширение_имени_файла" },
+
+        // Категория ОСНОВЫ БЕЗОПАСНОСТИ (SECURITY) - 4 термина
+        { t: "Пароль", c: "security", img: "https://resizer.mail.ru/p/93ce5e4d-9343-5e97-a355-0b0b4bd3ef9f/AQAKIRSpMLtBarI9NWOK_x7ZE0Xz1Q-Bj1Xx4Cd9ypr46srSdcsobUH-C7XKWsj9wB55CTEcqQdWIYW9xkkPdxqczMU.png", d: "Секретный набор символов, используемый для подтверждения личности пользователя.", link: "Пароль" },
+        { t: "Антивирус", c: "security", img: "https://st.drweb.com/static/new-www/themes/tiles_mobi/assets/img/decor/drweb_shield_os_win.png", d: "Программа, предназначенная для обнаружения, предотвращения и удаления вредоносного ПО.", link: "Антивирусная_программа" },
+        { t: "Файрвол (Брандмауэр)", c: "security", img: "https://upload.wikimedia.org/wikipedia/commons/5/5b/Firewall.png", d: "Сетевой экран, контролирующий входящий и исходящий сетевой трафик для защиты от несанкционированного доступа.", link: "Межсетевой_экран" },
+        { t: "Спам", c: "security", img: "https://vsekidki.ru/uploads/posts/2016-07/1469368661_spam-stamp.jpg", d: "Нежелательные массовые рассылки (обычно по электронной почте), часто рекламного или мошеннического характера.", link: "Спам" },
+    ];
+        
+        let currentCat = 'all';
+
+        // 💡 ИСПОЛЬЗУЕМ СОБЫТИЕ 'load' для гарантированного скрытия после полной загрузки всех ресурсов
+        window.addEventListener('load', () => {
+            initializeApp();
+        });
+
+        // 💡 Асинхронная инициализация после загрузки DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            // Запускаем инициализацию DOM-элементов сразу
+            generateCategoryChips();
+            renderCards(false);
+            // document.getElementById('totalCount').innerText = database.length; // УДАЛЕНО: Счетчик терминов
+        });
+
+        // --- ИНИЦИАЛИЗАЦИЯ И СКРЫТИЕ ПРЕЛОАДЕРА ---
+        function initializeApp() {
+            const preloader = document.getElementById('preloader');
+            
+            // Гарантированный таймаут, чтобы избежать бесконечной загрузки
+            setTimeout(() => {
+                preloader.classList.add('hidden');
+                setTimeout(() => preloader.style.display = 'none', 500); // Окончательное удаление
+            }, 300); 
+        }
+        
+        // --- ГЕНЕРАЦИЯ ЧИПОВ КАТЕГОРИЙ ---
+        function generateCategoryChips() {
+            const container = document.getElementById('categoriesContainer');
+            const categories = [
+                { id: 'all', name: 'Все', icon: 'fas fa-th-large' },
+                { id: 'hard', name: 'Оборудование', icon: 'fas fa-microchip', colorVar: '--color-hard' },
+                { id: 'soft', name: 'Базовый Софт', icon: 'fas fa-desktop', colorVar: '--color-soft' },
+                { id: 'code', name: 'Основы Кода', icon: 'fas fa-code', colorVar: '--color-code' },
+                { id: 'net', name: 'Интернет и Сеть', icon: 'fas fa-globe', colorVar: '--color-net' },
+                { id: 'data', name: 'Хранение', icon: 'fas fa-save', colorVar: '--color-data' },
+                { id: 'security', name: 'Безопасность', icon: 'fas fa-lock', colorVar: '--color-security' }
+            ];
+
+            container.innerHTML = categories.map(cat => {
+                const style = cat.colorVar ? `style="color:var(${cat.colorVar}); border-color: var(${cat.colorVar});"` : '';
+                const active = cat.id === 'all' ? 'active' : '';
+                return `<button class="cat-chip ${active}" ${style} onclick="filterCat('${cat.id}', this)"><i class="${cat.icon}"></i> ${cat.name}</button>`;
+            }).join('');
+        }
+
+        // --- РЕНДЕРИНГ КАРТОЧЕК ---
+        function renderCards(fromInput) {
+            const grid = document.getElementById('gridArea');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            grid.innerHTML = ''; 
+
+            const filteredData = database.filter(item => {
+                const matchCat = currentCat === 'all' || item.c === currentCat;
+                const matchSearch = item.t.toLowerCase().includes(search) || item.d.toLowerCase().includes(search);
+                return matchCat && matchSearch;
+            });
+            
+            if (filteredData.length === 0) {
+                 grid.innerHTML = '<p style="text-align:center; color:var(--text-light); padding: 50px;">Термины не найдены по вашему запросу.</p>';
+                 return;
+            }
+
+            filteredData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.onclick = () => openModal(item);
+                
+                card.innerHTML = `
+                    <div class="card-img-container">
+                        <div class="badge" style="background:${getCatColor(item.c)}">${getCatName(item.c)}</div>
+                        <img src="${item.img}" class="card-img" alt="${item.t}" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/900x350/2C2C4E/EAEAEA?text=${item.t}';">
+                    </div>
+                    <div class="card-body">
+                        <h3>${item.t}</h3>
+                        <p>${item.d.split('. ')[0] + '.'}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // --- ФИЛЬТРАЦИЯ КАТЕГОРИЙ ---
+        function filterCat(cat, btn) {
+            currentCat = cat;
+            document.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderCards(false);
+        }
+
+        // --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (получение цвета/имени категории) ---
+        function varCSS(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        }
+        function getCatColor(cat) {
+            const colors = {
+                hard: varCSS('--color-hard'), soft: varCSS('--color-soft'), code: varCSS('--color-code'),
+                net: varCSS('--color-net'), data: varCSS('--color-data'), security: varCSS('--color-security')
+            };
+            return colors[cat] || varCSS('--text-light');
+        }
+        function getCatName(cat) {
+            const names = {
+                hard: 'Оборудование', soft: 'Базовый Софт', code: 'Основы Кода',
+                net: 'Интернет и Сеть', data: 'Хранение', security: 'Безопасность'
+            };
+            return names[cat] || 'Инфо';
+        }
+
+        // --- МОДАЛЬНОЕ ОКНО ---
+        function openModal(item) {
+            document.getElementById('m-title').innerText = item.t;
+            const fullDesc = item.d; 
+            document.getElementById('m-desc').innerText = fullDesc;
+            document.getElementById('m-img').src = item.img;
+            document.getElementById('m-img').alt = item.t;
+            document.getElementById('m-img').onerror = function() { this.src='https://via.placeholder.com/900x350/2C2C4E/EAEAEA?text=' + item.t + ' (Изображение)'; };
+            
+            const catColor = getCatColor(item.c);
+            const badge = document.getElementById('m-badge');
+            badge.innerHTML = `<i class="fas fa-tag" style="color:${catColor};"></i> <span>${getCatName(item.c)}</span>`;
+            badge.style.background = catColor + '15';
+            
+            const wikiLink = document.getElementById('m-wiki');
+            wikiLink.href = "https://ru.wikipedia.org/wiki/" + item.link;
+            wikiLink.style.background = catColor;
+            wikiLink.style.boxShadow = `0 4px 8px ${catColor}40`;
+
+            const modal = document.getElementById('infoModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(e) {
+            if (e.target.id === 'infoModal') closeModalForce();
+        }
+        function closeModalForce() {
+            const modal = document.getElementById('infoModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    </script>
+</body>
+</html>
