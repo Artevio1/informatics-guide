@@ -1,0 +1,52 @@
+const itTerms = [
+        // Категория ОБОРУДОВАНИЕ (HARD) - 7 терминов
+        { t: "Процессор (CPU)", c: "hard", img: "https://thg.ru/wp-content/uploads/2024/04/luchshiy_processor_01.jpg", d: "'Мозг' компьютера. Выполняет все основные вычисления и инструкции программ.", link: "Центральный_процессор" },
+        { t: "Оперативная память (RAM)", c: "hard", img: "https://www.avast.com/hs-fs/hubfs/New_Avast_Academy/How%20to%20check%20your%20RAM%20memory/How_to_Check_How_Much_RAM_You_Have-Hero.jpg?width=1200&name=How_to_Check_How_Much_RAM_You_Have-Hero.jpg", d: "Очень быстрая, но временная память. Используется для хранения данных запущенных программ.", link: "Оперативная_память" }, // <-- ИСПРАВЛЕНО
+        { t: "Жесткий диск (HDD/SSD)", c: "hard", img: "https://upload.wikimedia.org/wikipedia/commons/f/f8/Laptop-hard-drive-exposed.jpg", d: "Долговременное хранилище для файлов, программ и операционной системы.", link: "Жёсткий_диск" },
+        { t: "Клавиатура", c: "hard", img: "https://media.wired.com/photos/68a91be7bbceeadd076b1720/master/w_1600%2Cc_limit/logitech-mx-keys-s-keyboard-Reviewer-Photo-SOURCE-Eric-Ravenscraft.png", d: "Основное устройство ввода для набора текста и команд.", link: "Компьютерная_клавиатура" },
+        { t: "Компьютерная мышь", c: "hard", img: "https://webobjects2.cdw.com/is/image/CDW/2881640?$product-main$", d: "Устройство ввода для управления курсором и взаимодействия с графическим интерфейсом.", link: "Компьютерная_мышь" },
+        { t: "Монитор", c: "hard", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/LG_L194WT-SF_LCD_monitor.jpg/1200px-LG_L194WT-SF_LCD_monitor.jpg", d: "Устройство вывода, отображающее графическую и текстовую информацию.", link: "Монитор" },
+        { t: "Планшет", c: "hard", img: "https://cdn.nur.kz/images/1200x675/172786e5bd143790.jpeg?version=1", d: "Мобильное устройство с сенсорным экраном, промежуточное между смартфоном и ноутбуком.", link: "Планшетный_компьютер" },
+
+        // Категория БАЗОВЫЙ СОФТ (SOFT) - 5 терминов
+        { t: "Операционная система (OS)", c: "soft", img: "https://media.proglib.io/posts/2019/09/23/7e7776c05721d5ab3e81f03fd99c9428.jpg", d: "Главная программа, управляющая всем оборудованием и запуском других программ (Windows, macOS, Linux).", link: "Операционная_система" },
+        { t: "Файл", c: "soft", img: "https://www.compgramotnost.ru/wp-content/uploads/2010/07/tipy-fajlov-1280x720.png", d: "Именованный набор данных, хранящийся на диске (текст, изображение, видео).", link: "Файл" },
+        { t: "Папка (Директория)", c: "soft", img: "https://fastcdn.kiev.ua/images/QmhzYnl5b0pwZzFDZWtURitQR013Z2hORmpmNUkvSzA1eitvT0syKzZOalkxL1RKUEFHamhoeWpjZ3hYbDJYcmp6TUtiN3pHYXBVZG5ZUUNnZkdtb3k3NitBUXlnTFdyUEdNRHBrZG5kejBLdGJkZnJrQ1hJbVRtVXIreFFCNkQ=.jpg", d: "Контейнер, используемый для организации и группировки файлов.", link: "Каталог_(файловая_система)" },
+        { t: "Приложение (Программа)", c: "soft", img: "https://cdn.3dnews.ru/assets/external/illustrations/2018/09/12/975310/Small-Win-Soft-1.png", d: "Набор инструкций, выполняющих конкретную задачу (например, текстовый редактор или игра).", link: "Прикладное_программное_обеспечение" },
+        { t: "Скриншот", c: "soft", img: "https://cdn.citilink.ru/4G3__Dceuamq7lxF3a8YqbHYUJO09OzG04x9qP16Ecg/enlarge:1/gravity:sm/height:601/resizing_type:fit/width:1300/plain/journal/55c88384-71d9-4072-85e6-afd545857f35.png?v6.0.0", d: "Снимок всего, что отображается на экране в данный момент.", link: "Скриншот" }, // <-- ИСПРАВЛЕНО
+
+        // Категория ОСНОВЫ КОДА (CODE) - 5 терминов
+        { t: "Переменная", c: "code", img: "https://habrastorage.org/getpro/habr/upload_files/fa9/416/f81/fa9416f811e8d66ea43bac145007cb4c.png", d: "Именованное место в коде, используемое для временного хранения значений (чисел, текста).", link: "Переменная" },
+        { t: "Цикл (Loop)", c: "code", img: "https://cdn-icons-png.flaticon.com/512/3580/3580066.png", d: "Конструкция программирования, которая позволяет повторять один и тот же набор действий несколько раз.", link: "Цикл_(программирование)" },
+        { t: "HTML", c: "code", img: "https://eurobyte.ru/img/articles/chto-takoe-html/image1.jpeg", d: "Язык разметки, который используется для создания структуры веб-страниц.", link: "HTML" },
+        { t: "CSS", c: "code", img: "https://mgearon.com/wp-content/uploads/2014/08/CSS3-Logo.jpg", d: "Язык стилей, используемый для описания внешнего вида и оформления веб-страницы.", link: "CSS" },
+        { t: "Комментарий", c: "code", img: "https://png.klev.club/uploads/posts/2024-04/png-klev-club-6iuk-p-kommentarii-png-18.png", d: "Текст в коде, который игнорируется программой, используется для объяснения логики другим разработчикам.", link: "Комментарий_(программирование)" },
+        
+        // Категория ИНТЕРНЕТ И СЕТЬ (NET) - 6 терминов
+        { t: "Интернет", c: "net", img: "https://static.pro32.com/iblock/990/990c76fe829552827d13a20e8607de04/2e8e8969a36ca0e5f62785433832649c.jpg", d: "Глобальная система взаимосвязанных компьютерных сетей.", link: "Интернет" },
+        { t: "Браузер", c: "net", img: "https://www.ixbt.com/img/r30/00/02/09/08/browsers.png", d: "Программа для запроса, обработки и отображения веб-страниц.", link: "Браузер" },
+        { t: "URL", c: "net", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7BnAzls58A297FISMqjcicPtSCeYby9TzgQ&s", d: "Уникальный адрес, используемый для идентификации ресурса в интернете (сайта, файла).", link: "URL" },
+        { t: "Wi-Fi", c: "net", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/WiFi_Logo.svg/1200px-WiFi_Logo.svg.png", d: "Беспроводная технология для передачи данных и доступа в интернет.", link: "Wi-Fi" },
+        { t: "Маршрутизатор (Роутер)", c: "net", img: "https://moon.kz/upload/iblock/9b1/e8ipda8xqhqp4lt9slivsrk3q0nk9449.jpg", d: "Устройство, соединяющее локальную сеть с интернетом и распределяющее трафик.", link: "Маршрутизатор" },
+        { t: "Облако (Cloud)", c: "net", img: "https://png.pngtree.com/png-clipart/20250105/original/pngtree-cloud-icon-png-image_4844772.png", d: "Термин, обозначающий сервисы, работающие в интернете, а не на вашем локальном компьютере.", link: "Облачные_вычисления" },
+        
+        // Категория ХРАНЕНИЕ ДАННЫХ (DATA) - 4 термина
+        { t: "База данных", c: "data", img: "https://www.marketresearchintellect.com/images/blogs/document-databases-the-backbone-of-modern-business-operations.webp", d: "Структурированный набор данных, хранящийся в электронном виде, часто для быстрого доступа и управления.", link: "База_данных" },
+        { t: "Облачное хранилище", c: "data", img: "https://oncloud.ru/uploads/3e/cloud-storage.webp", d: "Хранение данных на удаленных серверах, доступных через интернет (Яндекс.Диск, Google Drive).", link: "Облачное_хранилище" },
+        { t: "Резервная копия (Backup)", c: "data", img: "https://cyberprotect.ru/static/img/blog/blog_reserve_effect.png", d: "Копия данных, которая хранится отдельно и может быть использована для восстановления информации при сбое.", link: "Резервное_копирование" },
+        { t: "Расширение файла", c: "data", img: "https://zawindows.ru/wp-content/uploads/2022/08/file-extensions-on-a-blue-background.jpg", d: "Часть имени файла после точки, которая указывает на его тип (например, .txt, .jpg, .exe).", link: "Расширение_имени_файла" },
+
+        // Категория ОСНОВЫ БЕЗОПАСНОСТИ (SECURITY) - 4 термина
+        { t: "Пароль", c: "security", img: "https://resizer.mail.ru/p/93ce5e4d-9343-5e97-a355-0b0b4bd3ef9f/AQAKIRSpMLtBarI9NWOK_x7ZE0Xz1Q-Bj1Xx4Cd9ypr46srSdcsobUH-C7XKWsj9wB55CTEcqQdWIYW9xkkPdxqczMU.png", d: "Секретный набор символов, используемый для подтверждения личности пользователя.", link: "Пароль" },
+        { t: "Антивирус", c: "security", img: "https://st.drweb.com/static/new-www/themes/tiles_mobi/assets/img/decor/drweb_shield_os_win.png", d: "Программа, предназначенная для обнаружения, предотвращения и удаления вредоносного ПО.", link: "Антивирусная_программа" },
+        { t: "Файрвол (Брандмауэр)", c: "security", img: "https://upload.wikimedia.org/wikipedia/commons/5/5b/Firewall.png", d: "Сетевой экран, контролирующий входящий и исходящий сетевой трафик для защиты от несанкционированного доступа.", link: "Межсетевой_экран" },
+        { t: "Спам", c: "security", img: "https://vsekidki.ru/uploads/posts/2016-07/1469368661_spam-stamp.jpg", d: "Нежелательные массовые рассылки (обычно по электронной почте), часто рекламного или мошеннического характера.", link: "Спам" },
+    { t: "API", c: "code", img: "https://it-tehnik.ru/wp-content/uploads/api-interface.jpg", d: "Набор правил, через которые одна программа может общаться с другой (например, сайт с картами).", link: "API" },
+    { t: "Frontend", c: "code", img: "https://is5-ssl.mzstatic.com/image/thumb/Purple122/v4/30/62/17/3062176d-0644-8f23-810a-605a968d951a/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/512x512bb.jpg", d: "Внешняя часть сайта, которую видит пользователь: кнопки, формы, анимации.", link: "Фронтенд" },
+    { t: "Backend", c: "code", img: "https://pro-kursy.com/wp-content/uploads/2023/02/back-end.jpg", d: "Внутренняя логика сайта, которая работает на сервере и обрабатывает данные.", link: "Бэкенд" },
+    { t: "VPN", c: "net", img: "https://www.kaspersky.ru/content/ru-ru/images/repository/isc/2017/what-is-vpn-1.jpg", d: "Технология, создающая защищенное соединение поверх твоего интернета для анонимности.", link: "VPN" },
+    { t: "Open Source", c: "soft", img: "https://opensource.org/wp-content/uploads/2022/10/OSI_Standard_Logo_0.png", d: "Программное обеспечение с открытым кодом, которое любой может изучать и изменять.", link: "Открытое_программное_обеспечение" },
+    { t: "Cookies", c: "net", img: "https://www.kaspersky.ru/content/ru-ru/images/repository/isc/2020/9910/a-guide-to-cookies-1.jpg", d: "Небольшие фрагменты данных, которые сайты сохраняют в твоем браузере, чтобы «узнавать» тебя.", link: "Cookie" },
+    { t: "База данных", c: "data", img: "https://cloud.croc.ru/blog/wp-content/uploads/2021/04/chto-takoe-bd.jpg", d: "Специальное хранилище, где информация лежит в строгом порядке (как в больших таблицах).", link: "База_данных" },
+    { t: "Bug (Баг)", c: "soft", img: "https://it-tehnik.ru/wp-content/uploads/software-bug.jpg", d: "Ошибка в коде программы, из-за которой она ведет себя неправильно или вылетает.", link: "Программная_ошибка" }
+    ];
